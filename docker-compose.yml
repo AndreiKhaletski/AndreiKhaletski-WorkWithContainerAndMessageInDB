@@ -1,0 +1,52 @@
+name: work
+
+services:
+  work-service:
+    build: work-service
+    image: work:1.1.5
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_LOGIN: work_app
+      DB_PASSWORD: 855312
+    networks:
+      - work-network
+
+  pg_db:
+    build: postgresql
+    image: postgresql-work:1.1.5
+    environment:
+      POSTGRES_USER: work_admin
+      POSTGRES_PASSWORD: 855312
+    networks:
+      - work-network
+
+  pgadmin:
+    build: pgadmin
+    image: pgadmin-work:1.1.5
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@work.com
+      PGADMIN_DEFAULT_PASSWORD: work
+    ports:
+      - 85:80
+    networks:
+      - work-network
+
+  proxy:
+    build: proxy
+    image: proxy-work:1.1.5
+    ports:
+      - 80:80
+    networks:
+      - work-network
+
+  react-app:
+    build:
+      context: ./WorkWithDBReact/work-with-db-react
+    image: react-app:1.1.5
+    ports:
+      - 3000:80
+    networks:
+      - work-network
+
+networks:
+  work-network:
